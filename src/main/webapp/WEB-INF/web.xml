@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	metadata-complete="false" version="3.0">
+
+	<display-name>Protostar</display-name>
+
+	<description>Protostar</description>
+	<!-- ********************************** Spring ********************************** -->
+
+	<!-- The definition of the Root Spring Container shared by all Servlets 
+		and Filters -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath:spring/spring-context.xml
+		</param-value>
+	</context-param>
+
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<async-supported>true</async-supported>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<servlet>
+		<servlet-name>dispatcherServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring/spring-servlet.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dispatcherServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!--********************************** servlet ********************************** -->
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.jpg</url-pattern>
+		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.gif</url-pattern>
+		<url-pattern>*.ico</url-pattern>
+		<url-pattern>*.js</url-pattern>
+		<url-pattern>*.css</url-pattern>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>*.swf</url-pattern>
+		<url-pattern>*.xml</url-pattern>
+		<url-pattern>*.mp3</url-pattern>
+		<url-pattern>*.wma</url-pattern>
+		<url-pattern>*.wav</url-pattern>
+		<url-pattern>*.amr</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>10</session-timeout>
+
+		<!-- Servlet3.0规范中的<tracking-mode>允许你定义JSESSIONID是存储在cookie中还是URL参数中。 如果会话ID存储在URL中，那么它可能会被无意的存储在多个地方，包括浏览器历史、代理服务器日志、引用日志和web日志等。 
+			暴露了会话ID使得网站被session劫持攻击的几率大增。 然而，确保JSESSIONID被存储在cookie中非常容易： -->
+		<tracking-mode>COOKIE</tracking-mode>
+
+		<cookie-config>
+			<!-- 很多web站点使用SSL进行认证，但是后面或者是阻止非SSL的的后续交互或者使得一部分网站内容仍然可以通过非SSL的访问。 这使得会话的cookie（也就是JSESSIONID）容易受到session劫持攻击。 
+				要阻止它，cookie可以通过添加安全标志来创建，这确保了浏览器将不会在非SSL环境下传递cookie。 在Servlet规范的旧版本中，没有标准的方式来将JSESSIONID定义为安全的。 
+				现在在Servlet3.0中，<cookie-config>元素可以用于确保这个。 7 如果设置为true ,如果是普通的http请求,每次都是新的session -->
+			<secure>false</secure>
+
+			<!-- cookie可以使用HttpOnly标志创建，这将确保cookie不能被客户端脚本访问。 这帮助减轻了一些常见的XSS攻击。就像Security标志一样，旧版本的Servlet规范没有提供相应的支持。在Servlet3.0中可以如下的配置它： 
+				除了Servlet3.0的这种新的标准的方式，旧版本的Tomcat允许在server.xml中使用供应商特定的useHttpOnly属性来启用它。 
+				该属性在Tomcat5.5和6中默认是禁用的。在Tomcat7中，该属性默认是启用的。 因此即使你在web.xml中将其设置为false，然后部署在tomcat7中，除非你修改了server.xml文件，否则你的JSESSIONID依然是HttpOnly的。 -->
+			<http-only>true</http-only>
+		</cookie-config>
+	</session-config>
+
+	<!-- Welcome files -->
+	<welcome-file-list>
+		<welcome-file>/</welcome-file>
+	</welcome-file-list>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/errors/404</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/errors/500</location>
+	</error-page>
+	<error-page>
+		<location>/errors/error</location>
+	</error-page>
+
+	<security-constraint>
+		<web-resource-collection>
+			<url-pattern>/*</url-pattern>
+			<http-method>PUT</http-method>
+			<http-method>DELETE</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>OPTIONS</http-method>
+			<http-method>TRACE</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+		</auth-constraint>
+	</security-constraint>
+</web-app>
